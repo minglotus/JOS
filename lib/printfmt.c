@@ -7,7 +7,15 @@
 #include <inc/string.h>
 #include <inc/stdarg.h>
 #include <inc/error.h>
-
+#define COLR_BLACK 0;
+#define COLR_BLUE 1;
+#define COLR_GREEN 2;
+#define COLR_CYAN 3;
+#define COLR_RED 4;
+#define COLR_MAGENTA 5;
+#define COLR_BROWN 6;
+#define COLR_GRAY 7;
+#define COLR_HIGHLIGHT 8;
 /*
  * Space or zero padding and a field width are supported for the numeric
  * formats only.
@@ -17,7 +25,8 @@
  * The integer may be positive or negative,
  * so that -E_NO_MEM and E_NO_MEM are equivalent.
  */
-
+int colr = COLR_BLACK;
+int highlight = 0;
 static const char * const error_string[MAXERROR] =
 {
 	[E_UNSPECIFIED]	= "unspecified error",
@@ -87,7 +96,7 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 	unsigned long long num;
 	int base, lflag, width, precision, altflag;
 	char padc;
-
+	char colorcontrol[5];
 	while (1) {
 		while ((ch = *(unsigned char *) fmt++) != '%') {
 			if (ch == '\0')
@@ -105,6 +114,47 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 		switch (ch = *(unsigned char *) fmt++) {
 
 		// flag to pad on the right
+		case 'C':
+			memmove(colorcontrol, fmt, sizeof(unsigned char)*3);
+			colorcontrol[3] = '\0';
+			fmt += 3;
+			if(colorcontrol[0] >= '0' && colorcontrol[0] <= '9'){
+				colr = (colorcontrol[0] - '0') * 100 + (colorcontrol[1] - '0') * 10 + (colorcontrol[2] - '0');
+			}
+			else{
+				if(strcmp(colorcontrol, "ble") == 0) colr = COLR_BLUE
+				else if(strcmp(colorcontrol, "grn") == 0) colr = COLR_GREEN
+				else if(strcmp(colorcontrol, "cyn") == 0) colr = COLR_CYAN
+				else if(strcmp(colorcontrol, "red") == 0) colr = COLR_RED
+				else if(strcmp(colorcontrol, "mag") == 0) colr = COLR_MAGENTA
+				else if(strcmp(colorcontrol, "brw")== 0) colr = COLR_BROWN
+				else if(strcmp(colorcontrol, "gry") == 0) colr = COLR_GRAY
+				else
+					colr = COLR_BLACK;
+			}
+			break;
+				
+		case 'I':
+			highlight = COLR_HIGHLIGHT;
+			memmove(colorcontrol, fmt, sizeof(unsigned char)*3);
+			colorcontrol[3] = '\0';
+			fmt += 3;
+			if(colorcontrol[0] >= '0' && colorcontrol[0] <= '9'){
+				colr = (colorcontrol[0] - '0') * 100 + (colorcontrol[1] - '0') * 10 + (colorcontrol[2] - '0');
+			}
+			else{
+				if(strcmp(colorcontrol, "ble") == 0) colr = COLR_BLUE
+				else if(strcmp(colorcontrol, "grn") == 0) colr = COLR_GREEN
+				else if(strcmp(colorcontrol, "cyn") == 0) colr = COLR_CYAN
+				else if(strcmp(colorcontrol, "red") == 0) colr = COLR_RED
+				else if(strcmp(colorcontrol, "mag") == 0) colr = COLR_MAGENTA
+				else if(strcmp(colorcontrol, "brw")== 0) colr = COLR_BROWN
+				else if(strcmp(colorcontrol, "gry") == 0) colr = COLR_GRAY
+				else
+					colr = COLR_BLACK;
+			}
+			colr |= highlight;
+			break;
 		case '-':
 			padc = '-';
 			goto reswitch;
@@ -206,11 +256,10 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 		// (unsigned) octal
 		case 'o':
 			// Replace this with your code.
-			putch('X', putdat);
-			putch('X', putdat);
-			putch('X', putdat);
-			break;
+			num = getuint(&ap, lflag);
+			base = 8;
 
+			goto number;
 		// pointer
 		case 'p':
 			putch('0', putdat);
