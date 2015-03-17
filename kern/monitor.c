@@ -24,6 +24,7 @@ struct Command {
 static struct Command commands[] = {
 	{ "help", "Display this list of commands", mon_help },
 	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
+	{ "backtrace", "Display information about function call chain", mon_backtrace},
 };
 #define NCOMMANDS (sizeof(commands)/sizeof(commands[0]))
 
@@ -55,14 +56,39 @@ mon_kerninfo(int argc, char **argv, struct Trapframe *tf)
 	return 0;
 }
 
+/*int
+mon_backtrace(int argc, char **argv, struct Trapframe *tf)
+{
+	uint32_t *ebp = (uint32_t*)read_ebp();
+	uint32_t *eip = ebp + 1;
+	cprintf("Stack backtrace:\n");
+	while(ebp){
+		cprintf("ebp %08x   eip %08x  args %08x %08x %08x %08x %08x\n",ebp, *eip, *(ebp + 2), *(ebp+3),*(ebp + 4), *(ebp + 5), *(ebp + 6));
+		ebp = (uint32_t*)*ebp;
+		eip = (uint32_t*)ebp + 1;
+	}
+	
+	return 0;
+}*/
+
+
 int
 mon_backtrace(int argc, char **argv, struct Trapframe *tf)
 {
-	// Your code here.
+	uint32_t *ebp = (uint32_t*)read_ebp();
+	uint32_t *eip = ebp + 1;
+	cprintf("Stack backtrace:\n");
+	while(ebp){
+		cprintf("ebp %08x   eip %08x  args %08x %08x %08x %08x %08x\n",ebp, *eip, *(ebp + 2), *(ebp+3),*(ebp + 4), *(ebp + 5), *(ebp + 6));
+		struct Eipdebuginfo info;
+		debuginfo_eip(*eip,&info);
+		cprintf("\t%s:%d: %.*s+%d\n",info.eip_file,info.eip_line,info.eip_fn_namelen,info.eip_fn_name,(*eip) - info.eip_fn_addr);
+		ebp = (uint32_t*)*ebp;
+		eip = (uint32_t*)ebp + 1;
+	}
+	
 	return 0;
 }
-
-
 
 /***** Kernel monitor command interpreter *****/
 
@@ -115,8 +141,11 @@ monitor(struct Trapframe *tf)
 
 	cprintf("Welcome to the JOS kernel monitor!\n");
 	cprintf("Type 'help' for a list of commands.\n");
-
-
+	cprintf("%Ccyn Colored scheme with no highlight.\n");
+	cprintf("%Cble Hello%Cred World. %Cmag Test for colorization.\n");
+	cprintf("%Ibrw Colored scheme with highlight.\n");
+	cprintf("%Ible Hello%Ired World. %Imag Test for colorization.\n");
+	cprintf("%Cwht Return to default!\n");
 	while (1) {
 		buf = readline("K> ");
 		if (buf != NULL)

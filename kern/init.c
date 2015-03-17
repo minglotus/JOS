@@ -28,7 +28,8 @@ i386_init(void)
 	// Clear the uninitialized global data (BSS) section of our program.
 	// This ensures that all static/global variables start out zero.
 	memset(edata, 0, end - edata);
-
+//	int x = 1, y = 3, z = 4;
+//	cprintf("x %d, y %x, z %d\n", x, y, z);
 	// Initialize the console.
 	// Can't call cprintf until after we do this!
 	cons_init();
