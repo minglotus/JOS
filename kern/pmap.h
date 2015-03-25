@@ -8,7 +8,6 @@
 
 #include <inc/memlayout.h>
 #include <inc/assert.h>
-
 extern char bootstacktop[], bootstack[];
 
 extern struct PageInfo *pages;
