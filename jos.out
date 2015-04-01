@@ -1,0 +1,21 @@
+*** Now run 'make gdb'.
+***
+6828 decimal is 15254 octal!
+npages_basemem: 160	      npages_extmem: 16383
+Physical memory: 66556K available, base = 640K, extended = 65532K
+UVPT is ef400000
+UPAGES is ef000000
+Physical address of kern_pgdir: 119000
+Virtual address of kern_pgdir: f0119000
+check_page_alloc() succeeded!
+check_page() succeeded!
+check_kern_pgdir() succeeded!
+check_page_installed_pgdir() succeeded!
+Welcome to the JOS kernel monitor!
+Type 'help' for a list of commands.
+ Colored scheme with no highlight.
+ Hello World.  Test for colorization.
+ Colored scheme with highlight.
+ Hello World.  Test for colorization.
+ Return to default!
+qemu: terminating on signal 15 from pid 4315
