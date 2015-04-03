@@ -209,18 +209,15 @@ monitor(struct Trapframe *tf)
 
 	cprintf("Welcome to the JOS kernel monitor!\n");
 	cprintf("Type 'help' for a list of commands.\n");
-<<<<<<< HEAD
 
 	if (tf != NULL)
 		print_trapframe(tf);
 
-=======
 	cprintf("%Ccyn Colored scheme with no highlight.\n");
 	cprintf("%Cble Hello%Cred World. %Cmag Test for colorization.\n");
 	cprintf("%Ibrw Colored scheme with highlight.\n");
 	cprintf("%Ible Hello%Ired World. %Imag Test for colorization.\n");
 	cprintf("%Cwht Return to default!\n");
->>>>>>> lab2
 	while (1) {
 		buf = readline("K> ");
 		if (buf != NULL)

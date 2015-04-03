@@ -169,7 +169,7 @@ mem_init(void)
 	//////////////////////////////////////////////////////////////////////
 	// Make 'envs' point to an array of size 'NENV' of 'struct Env'.
 	// LAB 3: Your code here.
-
+	envs = (struct Env*)boot_alloc(NENV * sizeof(struct Env));	
 	//////////////////////////////////////////////////////////////////////
 	// Now that we've allocated the initial kernel data structures, we set
 	// up the list of free physical pages. Once we've done so, all further
@@ -202,7 +202,8 @@ mem_init(void)
 	//    - the new image at UENVS  -- kernel R, user R
 	//    - envs itself -- kernel RW, user NONE
 	// LAB 3: Your code here.
-
+	boot_map_region(kern_pgdir, UENVS, ROUNDUP(sizeof(struct Env) * NENV, PGSIZE), PADDR(envs), PTE_U);
+//	boot_map_region(kern_pgdir, (uintptr_t) envs, sizeof(struct Env) * NENV, PADDR(envs), PTE_P|PTE_W);
 	//////////////////////////////////////////////////////////////////////
 	// Use the physical memory that 'bootstack' refers to as the kernel
 	// stack.  The kernel stack grows down from virtual address KSTACKTOP.
@@ -225,7 +226,7 @@ mem_init(void)
 	// Your code goes here:
 	unsigned int add = 1;
 	unsigned int bias = 1;
-	uint32_t edx;
+/*	uint32_t edx;
 	cpuid(1, NULL, NULL, NULL, &edx);
 	pseEnbl = (edx >> 3) & 1;
 	if(pseEnbl){
@@ -234,8 +235,8 @@ mem_init(void)
 			kern_pgdir[PDX(KERNBASE+padd)] = padd  | PTE_PS | PTE_W| PTE_P;
 		}	
 	}
-	else
-	boot_map_region(kern_pgdir, KERNBASE, (size_t)((add<<31) + ((add<<31) - bias) - bias)-KERNBASE + bias,0 ,PTE_W);
+	else*/
+	boot_map_region(kern_pgdir, KERNBASE, -KERNBASE,0 ,PTE_W);
 	// Check that the initial page directory has been set up correctly.
 	check_kern_pgdir();
 
@@ -246,13 +247,13 @@ mem_init(void)
 	//
 	// If the machine reboots at this point, you've probably set up your
 	// kern_pgdir wrong.
-	if(pseEnbl){
+/*	if(pseEnbl){
 		lcr4(rcr4() | CR4_PSE);
 		uintptr_t paddress = 0;
 		for(paddress = 0; paddress < ((uintptr_t)0x10000000); paddress += PTSIZE){
 		invlpg((void*)(KERNBASE + paddress));
 	}
-	}
+	}*/
 	lcr3(PADDR(kern_pgdir));
 
 	check_page_free_list(0);
