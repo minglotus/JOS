@@ -279,7 +279,7 @@ region_alloc(struct Env *e, void *va, size_t len)
 	for(; st < en; st += PGSIZE){
 		struct PageInfo* page = page_alloc(0);
 		if(!page) panic("region_alloc: page_allocation failed!");
-		int ret = page_insert(e->env_pgdir, page, va, PTE_W|PTE_U);
+		int ret = page_insert(e->env_pgdir, page, st, PTE_W|PTE_U);
 		if(ret != 0){
 			panic("region_alloc: page_mapping failed!");
 		}
