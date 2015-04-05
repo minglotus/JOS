@@ -1,0 +1,62 @@
+kern/pmap.c:103:	// LAB 2: Your code here.
+kern/pmap.c:171:	// LAB 3: Your code here.
+kern/pmap.c:204:	// LAB 3: Your code here.
+kern/pmap.c:582:	// LAB 3: Your code here.
+kern/trap.c:67:	// LAB 3: Your code here.
+kern/trap.c:154:	// LAB 3: Your code here.
+kern/trap.c:227:	// LAB 3: Your code here.
+kern/kdebug.c:144:		// LAB 3: Your code here.
+kern/kdebug.c:152:		// LAB 3: Your code here.
+kern/kdebug.c:206:	// Your code here.
+匹配到二进制文件 kern/.kdebug.c.swp
+kern/syscall.c:23:	// LAB 3: Your code here.
+kern/syscall.c:73:	// LAB 3: Your code here.
+kern/trapentry.S:70: // Lab 3: Your code here for generating entry points for the different traps.
+kern/trapentry.S:120:  //Lab 3: Your code here for _alltraps
+kern/env.c:118:	// LAB 3: Your code here.
+kern/env.c:190:	// LAB 3: Your code here.
+kern/env.c:282:	// LAB 3: Your code here.
+kern/env.c:360:	// LAB 3: Your code here.
+kern/env.c:391:	// LAB 3: Your code here.
+kern/env.c:421:	// LAB 3: Your code here.
+kern/env.c:435:	// LAB 3: Your code here.
+kern/env.c:559:	// LAB 3: Your code here.
+lib/libmain.c:15:	// LAB 3: Your code here.
+obj/user/divzero.asm:73:	// LAB 3: Your code here.
+obj/user/faultread.asm:66:	// LAB 3: Your code here.
+obj/user/softint.asm:62:	// LAB 3: Your code here.
+obj/user/faultreadkernel.asm:66:	// LAB 3: Your code here.
+obj/user/breakpoint.asm:62:	// LAB 3: Your code here.
+obj/user/hello.asm:72:	// LAB 3: Your code here.
+obj/user/badsegment.asm:64:	// LAB 3: Your code here.
+obj/user/faultwrite.asm:63:	// LAB 3: Your code here.
+obj/user/buggyhello2.asm:66:	// LAB 3: Your code here.
+obj/user/faultwritekernel.asm:63:	// LAB 3: Your code here.
+obj/user/testbss.asm:137:	// LAB 3: Your code here.
+obj/user/evilhello.asm:67:	// LAB 3: Your code here.
+obj/user/buggyhello.asm:66:	// LAB 3: Your code here.
+obj/kern/kernel.asm:1910:	// LAB 2: Your code here.
+obj/kern/kernel.asm:3143:	// LAB 3: Your code here.
+obj/kern/kernel.asm:4523:	// LAB 3: Your code here.
+obj/kern/kernel.asm:5220:	// LAB 3: Your code here.
+obj/kern/kernel.asm:5260:	// LAB 3: Your code here.
+obj/kern/kernel.asm:5290:	// LAB 3: Your code here.
+obj/kern/kernel.asm:5453:	// LAB 3: Your code here.
+obj/kern/kernel.asm:5474:	// LAB 3: Your code here.
+obj/kern/kernel.asm:5528:	// LAB 3: Your code here.
+obj/kern/kernel.asm:5708:	// LAB 3: Your code here.
+obj/kern/kernel.asm:5730:	// LAB 3: Your code here.
+obj/kern/kernel.asm:5850:	// LAB 3: Your code here.
+obj/kern/kernel.asm:6193:	// LAB 3: Your code here.
+obj/kern/kernel.asm:6428:	// LAB 3: Your code here.
+obj/kern/kernel.asm:6452:	// LAB 3: Your code here.
+obj/kern/kernel.asm:6478:	// LAB 3: Your code here.
+obj/kern/kernel.asm:6766:	// LAB 3: Your code here.
+obj/kern/kernel.asm:6882:	// LAB 3: Your code here.
+obj/kern/kernel.asm:7091:	// LAB 3: Your code here.
+obj/kern/kernel.asm:7108:	// LAB 3: Your code here.
+obj/kern/kernel.asm:7125:	// LAB 3: Your code here.
+obj/kern/kernel.asm:7483:		// LAB 3: Your code here.
+obj/kern/kernel.asm:7526:		// LAB 3: Your code here.
+obj/kern/kernel.asm:7635:	// Your code here.
+obj/kern/kernel.asm:7744:		// LAB 3: Your code here.

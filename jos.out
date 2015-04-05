@@ -5,12 +5,15 @@ npages_basemem: 160	      npages_extmem: 16383
 Physical memory: 66556K available, base = 640K, extended = 65532K
 UVPT is ef400000
 UPAGES is ef000000
-Physical address of kern_pgdir: 17f000
-Virtual address of kern_pgdir: f017f000
+Physical address of kern_pgdir: 180000
+Virtual address of kern_pgdir: f0180000
 check_page_alloc() succeeded!
 check_page() succeeded!
 check_kern_pgdir() succeeded!
 check_page_installed_pgdir() succeeded!
+funs f011c358
+funs[0] f0103804
+funs[48] f0103852
 [00000000] new env 00001000
 p_memsz: 3f77, p_filesz: 3f77
 p_memsz: 142b, p_filesz: 142b
@@ -18,23 +21,42 @@ p_memsz: 400084, p_filesz: 4
 env_create: finished!
 up to now everything goes well!
 Incoming TRAP frame at 0xefffffbc
-TRAP frame at 0xf01a1000
+SYSTEM CALL
+user_mem_check va: eebfde88, len: 1f
+user_mem_check success va: eebfde88, len: 1f
+user_mem_check va: eebfde88, len: 1f
+user_mem_check success va: eebfde88, len: 1f
+Making sure bss works right...
+up to now everything goes well!
+Incoming TRAP frame at 0xefffffbc
+SYSTEM CALL
+user_mem_check va: eebfde88, len: 32
+user_mem_check success va: eebfde88, len: 32
+user_mem_check va: eebfde88, len: 32
+user_mem_check success va: eebfde88, len: 32
+Yes, good.  Now doing a wild write off the end...
+up to now everything goes well!
+Incoming TRAP frame at 0xefffffbc
+PAGE FAULT
+[00001000] user fault va 00c03080 ip 008000be
+TRAP frame at 0xf01a2000
   edi  0x00000000
   esi  0x00000000
-  ebp  0xeebfde60
+  ebp  0xeebfdfd0
   oesp 0xefffffdc
   ebx  0x00000000
   edx  0xeebfde88
-  ecx  0x0000001f
-  eax  0x00000000
+  ecx  0x00000032
+  eax  0x00000032
   es   0x----0023
   ds   0x----0023
-  trap 0x0000000d General Protection
-  err  0x00000182
-  eip  0x00800dba
+  trap 0x0000000e Page Fault
+  cr2  0x00c03080
+  err  0x00000006 [user, write, not-present]
+  eip  0x008000be
   cs   0x----001b
   flag 0x00000092
-  esp  0xeebfde54
+  esp  0xeebfdfb8
   ss   0x----0023
 [00001000] free env 00001000
 Destroyed the only environment - nothing more to do!
@@ -45,4 +67,4 @@ Type 'help' for a list of commands.
  Colored scheme with highlight.
  Hello World.  Test for colorization.
  Return to default!
-qemu: terminating on signal 15 from pid 5185
+qemu: terminating on signal 15 from pid 3739
