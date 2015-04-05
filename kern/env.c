@@ -119,9 +119,9 @@ env_init(void)
 	int i;
 	for(i = NENV - 1; i >= 0; --i){
 		envs[i].env_id = 0;
-		envs[i].env_runs = 0;
-		envs[i].env_type = ENV_TYPE_USER;
-		envs[i].env_status = ENV_FREE;
+//		envs[i].env_runs = 0;
+//		envs[i].env_type = ENV_TYPE_USER;
+//		envs[i].env_status = ENV_FREE;
 		envs[i].env_link = env_free_list;
 		env_free_list = envs + i;
 	}
@@ -189,13 +189,20 @@ env_setup_vm(struct Env *e)
 
 	// LAB 3: Your code here.
 	p->pp_ref++;
+	e->env_pgdir = (pde_t *) page2kva(p);
+	memcpy(e->env_pgdir, kern_pgdir, PGSIZE);
+
+	// UVPT maps the env's own page table read-only.
+	// Permissions: kernel R, user R
+	e->env_pgdir[PDX(UVPT)] = PADDR(e->env_pgdir) | PTE_P | PTE_U;
+	/*p->pp_ref++;
 	e->env_pgdir = (pde_t*) page2kva(p);
-	memmove(e->env_pgdir, kern_pgdir, PGSIZE);
+	memcpy(e->env_pgdir, kern_pgdir, PGSIZE);
 //	memset(e->env_pgdir, 0, PDX(UTOP) * sizeof(pde_t));
 	// UVPT maps the env's own page table read-only.
 	// Permissions: kernel R, user R
 	e->env_pgdir[PDX(UVPT)] = PADDR(e->env_pgdir) | PTE_P | PTE_U;
-
+*/
 	return 0;
 }
 
@@ -275,7 +282,13 @@ region_alloc(struct Env *e, void *va, size_t len)
 	// LAB 3: Your code here.
 	// (But only if you need it for load_icode.)
 	//
-	void* st = ROUNDDOWN(va, PGSIZE), *en = ROUNDUP(va + len, PGSIZE);
+	void *begin = ROUNDDOWN(va, PGSIZE), *end = ROUNDUP(va+len, PGSIZE);
+	for (; begin < end; begin += PGSIZE) {
+		struct PageInfo *pg = page_alloc(0);
+		if (!pg) panic("region_alloc failed!");
+		page_insert(e->env_pgdir, pg, begin, PTE_W | PTE_U);
+	}
+	/*void* st = ROUNDDOWN(va, PGSIZE), *en = ROUNDUP(va + len, PGSIZE);
 	for(; st < en; st += PGSIZE){
 		struct PageInfo* page = page_alloc(0);
 		if(!page) panic("region_alloc: page_allocation failed!");
@@ -283,7 +296,7 @@ region_alloc(struct Env *e, void *va, size_t len)
 		if(ret != 0){
 			panic("region_alloc: page_mapping failed!");
 		}
-	}
+	}*/
 
 	// Hint: It is easier to use region_alloc if the caller can pass
 	//   'va' and 'len' values that are not page-aligned.
@@ -345,7 +358,40 @@ load_icode(struct Env *e, uint8_t *binary)
 	//  What?  (See env_run() and env_pop_tf() below.)
 
 	// LAB 3: Your code here.
+	struct Elf *ELFHDR = (struct Elf *) binary;
 	struct Proghdr *ph, *eph;
+
+	if (ELFHDR->e_magic != ELF_MAGIC)
+		panic("Not executable!");
+	
+	ph = (struct Proghdr *) ((uint8_t *) ELFHDR + ELFHDR->e_phoff);
+	eph = ph + ELFHDR->e_phnum;
+	//  You should only load segments with ph->p_type == ELF_PROG_LOAD.
+	//  Each segment's virtual address can be found in ph->p_va
+	//  and its size in memory can be found in ph->p_memsz.
+	//  The ph->p_filesz bytes from the ELF binary, starting at
+	//  'binary + ph->p_offset', should be copied to virtual address
+	//  ph->p_va.  Any remaining memory bytes should be cleared to zero.
+	//  (The ELF header should have ph->p_filesz <= ph->p_memsz.)
+	//  Use functions from the previous lab to allocate and map pages.
+	lcr3(PADDR(e->env_pgdir));
+	//it's silly to use kern_pgdir here.
+	for (; ph < eph; ph++)
+		if (ph->p_type == ELF_PROG_LOAD) {
+			region_alloc(e, (void *)ph->p_va, ph->p_memsz);
+			memset((void *)ph->p_va, 0, ph->p_memsz);
+			memcpy((void *)ph->p_va, binary+ph->p_offset, ph->p_filesz);
+			//but I'm curious about how exactly p_memsz and p_filesz differs
+			cprintf("p_memsz: %x, p_filesz: %x\n", ph->p_memsz, ph->p_filesz);
+		}
+	//we can use this because kern_pgdir is a subset of e->env_pgdir
+	lcr3(PADDR(kern_pgdir));
+	// Now map one page for the program's initial stack
+	// at virtual address USTACKTOP - PGSIZE.
+	// LAB 3: Your code here.
+	e->env_tf.tf_eip = ELFHDR->e_entry;
+	region_alloc(e, (void *) (USTACKTOP - PGSIZE), PGSIZE);
+	/*struct Proghdr *ph, *eph;
 	struct Elf *ELFHDR;
 	ELFHDR  = (struct Elf*)binary;
 	if(ELFHDR->e_magic != ELF_MAGIC){
@@ -373,7 +419,7 @@ load_icode(struct Env *e, uint8_t *binary)
 	// Now map one page for the program's initial stack
 	// at virtual address USTACKTOP - PGSIZE.
 	// LAB 3: Your code here.
-	region_alloc(e,(void*)(USTACKTOP - PGSIZE), PGSIZE);
+	region_alloc(e,(void*)(USTACKTOP - PGSIZE), PGSIZE);*/
 }
 
 //

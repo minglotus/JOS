@@ -58,14 +58,18 @@ static const char *trapname(int trapno)
 	return "(unknown trap)";
 }
 
-
+extern uint32_t thdl[];
 void
 trap_init(void)
 {
 	extern struct Segdesc gdt[];
 
 	// LAB 3: Your code here.
-
+	int i = 0;
+	for(i = 0; i < 17; i++){
+		SETGATE(idt[i], 0, GD_KT, thdl[i], 0);
+	}
+	
 	// Per-CPU setup 
 	trap_init_percpu();
 }
